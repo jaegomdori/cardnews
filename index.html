@@ -3,78 +3,44 @@
 <head>
 <meta charset="utf-8">
 <meta name="viewport" content="width=device-width, initial-scale=1">
-<title>카드뉴스 배너</title>
+<title>생명과학 카드뉴스 배너</title>
 <style>
   :root{
-    --bg: #0f1115;
-    --arrow-bg: rgba(0,0,0,.45);
-    --arrow-bg-hover: rgba(0,0,0,.75);
-    --arrow-color: #ffffff;
-    --dot: rgba(255,255,255,.45);
-    --dot-active: #ffffff;
-    --title-bg: linear-gradient(to top, rgba(0,0,0,.7), rgba(0,0,0,0));
-    --title-color: #ffffff;
-    --radius: 14px;
-    --gap: 14px;
-    --ratio: 40%;
+    --bg:#0f1115;
+    --arrow-bg:rgba(0,0,0,.45); --arrow-bg-hover:rgba(0,0,0,.75); --arrow-color:#fff;
+    --dot:rgba(255,255,255,.5); --dot-active:#fff;
+    --radius:14px; --gap:14px;
+    --ratio:42%;              /* 배너 높이 비율. 이미지가 잘리면 값을 키우세요(예: 56%) */
   }
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-  .banner{
-    position:relative; width:100%;
-    background:var(--bg); border-radius:var(--radius);
-    overflow:hidden; user-select:none;
-  }
-  .viewport{ position:relative; width:100%; padding-top:var(--ratio); }
-  .track{ position:absolute; inset:0; }
-  .slide{
-    position:absolute; inset:0;
-    opacity:0;
-    pointer-events:none;      /* 숨겨진 슬라이드는 클릭 안 받음 (오작동 방지) */
-    transition:opacity .6s ease;
-  }
-  .slide.active{ opacity:1; pointer-events:auto; }
-  .card{
-    display:block; width:100%; height:100%;
-    text-decoration:none; color:inherit; position:relative; cursor:pointer;
-  }
-  .card img{ width:100%; height:100%; object-fit:cover; display:block; }
-  .caption{
-    position:absolute; left:0; right:0; bottom:0;
-    padding:34px 20px 16px;
-    background:var(--title-bg); color:var(--title-color);
-    font-family:system-ui, -apple-system, "Malgun Gothic", sans-serif;
-    font-size:clamp(14px, 2.4vw, 22px); font-weight:700; line-height:1.3;
-  }
-  .nav{
-    position:absolute; top:50%; transform:translateY(-50%);
-    width:44px; height:44px; border:none; cursor:pointer;
-    background:var(--arrow-bg); color:var(--arrow-color);
-    border-radius:50%; font-size:22px;
-    display:flex; align-items:center; justify-content:center;
-    transition:background .2s; z-index:3;
-  }
-  .nav:hover{ background:var(--arrow-bg-hover); }
-  .prev{ left:var(--gap); }
-  .next{ right:var(--gap); }
-  .dots{
-    position:absolute; left:0; right:0; bottom:var(--gap);
-    display:flex; justify-content:center; gap:8px; z-index:3;
-  }
-  .dot{
-    width:9px; height:9px; border-radius:50%; border:none;
-    background:var(--dot); cursor:pointer; padding:0;
-    transition:transform .2s, background .2s;
-  }
-  .dot.active{ background:var(--dot-active); transform:scale(1.25); }
+  .banner{position:relative;width:100%;background:var(--bg);border-radius:var(--radius);overflow:hidden;user-select:none;font-family:system-ui,-apple-system,"Malgun Gothic",sans-serif;}
+  .viewport{position:relative;width:100%;padding-top:var(--ratio);}
+  .track{position:absolute;inset:0;}
+  .slide{position:absolute;inset:0;opacity:0;pointer-events:none;transition:opacity .6s ease;}
+  .slide.active{opacity:1;pointer-events:auto;}   /* 보이는 슬라이드만 클릭됨 */
+  .card{display:block;width:100%;height:100%;text-decoration:none;color:inherit;position:relative;cursor:pointer;}
+  .card img{width:100%;height:100%;object-fit:cover;display:block;}
+  /* 이미지 위 텍스트 오버레이 (title이 있을 때만 표시) */
+  .overlay{position:absolute;left:0;right:0;bottom:0;padding:6% 5% 4%;
+    background:linear-gradient(to top,rgba(0,0,0,.80),rgba(0,0,0,.35) 55%,rgba(0,0,0,0));color:#fff;}
+  .overlay .cat{font-size:clamp(11px,1.6vw,16px);font-weight:700;opacity:.92;margin-bottom:6px;}
+  .overlay .ttl{font-size:clamp(18px,3.3vw,34px);font-weight:800;line-height:1.25;margin:0 0 10px;text-shadow:0 2px 8px rgba(0,0,0,.55);}
+  .overlay .tags{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:6px;}
+  .overlay .tag{font-size:clamp(10px,1.5vw,15px);font-weight:700;background:rgba(255,255,255,.9);color:#111;padding:4px 12px;border-radius:999px;}
+  .overlay .hint{font-size:clamp(10px,1.4vw,14px);font-weight:700;opacity:.9;margin-top:2px;}
+  .nav{position:absolute;top:50%;transform:translateY(-50%);width:44px;height:44px;border:none;cursor:pointer;background:var(--arrow-bg);color:var(--arrow-color);border-radius:50%;font-size:22px;display:flex;align-items:center;justify-content:center;transition:background .2s;z-index:3;}
+  .nav:hover{background:var(--arrow-bg-hover);}
+  .prev{left:var(--gap);} .next{right:var(--gap);}
+  .dots{position:absolute;left:0;right:0;bottom:var(--gap);display:flex;justify-content:center;gap:8px;z-index:3;}
+  .dot{width:9px;height:9px;border-radius:50%;border:none;background:var(--dot);cursor:pointer;padding:0;transition:transform .2s,background .2s;}
+  .dot.active{background:var(--dot-active);transform:scale(1.25);}
 </style>
 </head>
 <body>
 
 <div class="banner" id="banner">
-  <div class="viewport">
-    <div class="track" id="track"></div>
-  </div>
+  <div class="viewport"><div class="track" id="track"></div></div>
   <button class="nav prev" id="prev" aria-label="이전">&#10094;</button>
   <button class="nav next" id="next" aria-label="다음">&#10095;</button>
   <div class="dots" id="dots"></div>
@@ -82,16 +48,30 @@
 
 <script>
   /* ============================================================
-     ★ 여기 CARDS 목록만 수정하면 됩니다 ★
-     - 카드 1개 = { img: 표지이미지, title: 배너 제목, link: 클릭 시 이동할 노션 주소 }
-     - 카드를 추가/삭제하면 점·자동넘김이 자동 대응됩니다.
+     ★ 카드 추가/수정은 여기 CARDS 목록만 손대면 됩니다 ★
+
+     카드 1개 = {
+       img:   "표지이미지 파일명",              (필수)
+       link:  "클릭 시 이동할 노션 주소",         (필수)
+       title: "배너에 얹을 제목",                (선택 - 비우면 이미지만 표시)
+       cat:   "카테고리 라벨",                   (선택)
+       tags:  ["#해시태그", ...]                (선택)
+     }
+     - 표지 이미지에 이미 글자가 들어 있으면 title/tags를 비워두세요(중복 방지).
+     - 글자 없는 깨끗한 이미지면 title/cat/tags를 채우면 배너가 위에 얹어줍니다.
+     - 카드를 추가/삭제하면 점·자동넘김이 자동으로 맞춰집니다.
      ------------------------------------------------------------ */
   const CARDS = [
-    { img: "1.png", title: "", link: "https://biotrap.notion.site/39e69ba1e49080d09b80d1f6d772ad3f?source=copy_link" },  // 배리 마셜 자가실험
-    { img: "2.png", title: "", link: "https://biotrap.notion.site/39e69ba1e49080ebb725f098158b6e6a?source=copy_link" },  // 인간 세포 3D 이미지
-    { img: "3.png", title: "", link: "https://biotrap.notion.site/39e69ba1e49080f79c53f37227973fd1?source=copy_link" },  // 요거트 과잉섭취 사례
-    { img: "4.png", title: "", link: "https://biotrap.notion.site/39e69ba1e490803a8494d05495d67b9e?source=copy_link" },  // 크리스퍼 다운증후군
-    { img: "5.png", title: "", link: "https://biotrap.notion.site/39e69ba1e4908031b145c3a4d05eb9c4?source=copy_link" },  // 뇌종양 mRNA 백신
+    { img:"1.png", link:"https://biotrap.notion.site/39e69ba1e49080d09b80d1f6d772ad3f?source=copy_link",
+      title:"", cat:"", tags:[] },   // 배리 마셜 자가실험
+    { img:"2.png", link:"https://biotrap.notion.site/39e69ba1e49080ebb725f098158b6e6a?source=copy_link",
+      title:"", cat:"", tags:[] },   // 인간 세포 3D 이미지
+    { img:"3.png", link:"https://biotrap.notion.site/39e69ba1e49080f79c53f37227973fd1?source=copy_link",
+      title:"", cat:"", tags:[] },   // 요거트 과잉섭취 사례
+    { img:"4.png", link:"https://biotrap.notion.site/39e69ba1e490803a8494d05495d67b9e?source=copy_link",
+      title:"", cat:"", tags:[] },   // 크리스퍼 다운증후군
+    { img:"5.png", link:"https://biotrap.notion.site/39e69ba1e4908031b145c3a4d05eb9c4?source=copy_link",
+      title:"", cat:"", tags:[] },   // 뇌종양 mRNA 백신
   ];
 
   const INTERVAL_MS = 5000;   // ← 자동 넘김 속도(ms). 5000 = 5초
@@ -104,25 +84,24 @@
   const N = CARDS.length;
 
   CARDS.forEach((c, i) => {
-    const s = document.createElement('div');
-    s.className = 'slide';
-    const a = document.createElement('a');
-    a.className = 'card';
+    const s = document.createElement('div'); s.className = 'slide';
+    const a = document.createElement('a'); a.className = 'card';
     a.href = c.link || '#';
     if (OPEN_NEW_TAB && c.link && c.link !== '#') { a.target = '_blank'; a.rel = 'noopener'; }
-    const img = document.createElement('img');
-    img.src = c.img; img.alt = c.title || ('카드 ' + (i+1));
+    const img = document.createElement('img'); img.src = c.img; img.alt = c.title || ('카드 ' + (i+1));
     a.appendChild(img);
     if (c.title) {
-      const cap = document.createElement('div');
-      cap.className = 'caption';
-      cap.textContent = c.title;
-      a.appendChild(cap);
+      const ov = document.createElement('div'); ov.className = 'overlay';
+      let html = '';
+      if (c.cat) html += '<div class="cat">' + c.cat + '</div>';
+      html += '<div class="ttl">' + c.title + '</div>';
+      if (c.tags && c.tags.length) html += '<div class="tags">' + c.tags.map(t=>'<span class="tag">'+t+'</span>').join('') + '</div>';
+      html += '<div class="hint">▶ 카드 클릭 → 자세히 보기</div>';
+      ov.innerHTML = html;
+      a.appendChild(ov);
     }
-    s.appendChild(a);
-    track.appendChild(s);
-    const d = document.createElement('button');
-    d.className = 'dot';
+    s.appendChild(a); track.appendChild(s);
+    const d = document.createElement('button'); d.className = 'dot';
     d.addEventListener('click', () => { go(i); restart(); });
     dotsBox.appendChild(d);
   });
@@ -137,9 +116,9 @@
   function go(i){ index = (i + N) % N; render(); }
   function next(){ go(index+1); }
   function prev(){ go(index-1); }
-  function start(){ timer = setInterval(next, INTERVAL_MS); }
-  function stop(){ clearInterval(timer); }
-  function restart(){ stop(); start(); }
+  function start(){ stop(); timer = setInterval(next, INTERVAL_MS); }  // 항상 1개만 유지
+  function stop(){ if(timer){ clearInterval(timer); timer = null; } }
+  function restart(){ start(); }
 
   document.getElementById('next').addEventListener('click', ()=>{ next(); restart(); });
   document.getElementById('prev').addEventListener('click', ()=>{ prev(); restart(); });
@@ -150,6 +129,7 @@
   const banner = document.getElementById('banner');
   banner.addEventListener('mouseenter', stop);
   banner.addEventListener('mouseleave', start);
+  document.addEventListener('visibilitychange', ()=>{ document.hidden ? stop() : start(); });
   let startX = null;
   banner.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
   banner.addEventListener('touchend', e=>{
@@ -159,8 +139,7 @@
     startX = null;
   }, {passive:true});
 
-  render();
-  start();
+  render(); start();
 </script>
 </body>
 </html>
