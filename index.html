@@ -5,9 +5,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1">
 <title>카드뉴스 배너</title>
 <style>
-  /* ===== 스타일 변수 (여기서 색상·간격 수정) ===== */
   :root{
-    --bg: #0f1115;              /* 배너 바깥 배경색 */
+    --bg: #0f1115;
     --arrow-bg: rgba(0,0,0,.45);
     --arrow-bg-hover: rgba(0,0,0,.75);
     --arrow-color: #ffffff;
@@ -15,60 +14,38 @@
     --dot-active: #ffffff;
     --title-bg: linear-gradient(to top, rgba(0,0,0,.7), rgba(0,0,0,0));
     --title-color: #ffffff;
-    --radius: 14px;            /* 모서리 둥글기 */
-    --gap: 14px;               /* 화살표·점 여백 */
-    --ratio: 40%;              /* 배너 높이 비율(가로형). 작을수록 납작함 */
+    --radius: 14px;
+    --gap: 14px;
+    --ratio: 40%;
   }
-
   *{box-sizing:border-box;}
   html,body{margin:0;padding:0;}
-
   .banner{
-    position:relative;
-    width:100%;                 /* 노션 임베드 폭에 맞춰 반응형 */
-    background:var(--bg);
-    border-radius:var(--radius);
-    overflow:hidden;
-    user-select:none;
+    position:relative; width:100%;
+    background:var(--bg); border-radius:var(--radius);
+    overflow:hidden; user-select:none;
   }
-  .viewport{
-    position:relative;
-    width:100%;
-    padding-top:var(--ratio);   /* 가로형 비율 결정 */
-  }
+  .viewport{ position:relative; width:100%; padding-top:var(--ratio); }
   .track{ position:absolute; inset:0; }
-
   .slide{
     position:absolute; inset:0;
     opacity:0;
+    pointer-events:none;      /* 숨겨진 슬라이드는 클릭 안 받음 (오작동 방지) */
     transition:opacity .6s ease;
   }
-  .slide.active{ opacity:1; }
-
-  /* 클릭 가능한 카드(=링크) */
+  .slide.active{ opacity:1; pointer-events:auto; }
   .card{
     display:block; width:100%; height:100%;
-    text-decoration:none; color:inherit;
-    position:relative; cursor:pointer;
+    text-decoration:none; color:inherit; position:relative; cursor:pointer;
   }
-  .card img{
-    width:100%; height:100%;
-    object-fit:cover;           /* 가로형에 이미지 꽉 채움 */
-    display:block;
-  }
-  /* 하단 제목 띠 */
+  .card img{ width:100%; height:100%; object-fit:cover; display:block; }
   .caption{
     position:absolute; left:0; right:0; bottom:0;
     padding:34px 20px 16px;
-    background:var(--title-bg);
-    color:var(--title-color);
+    background:var(--title-bg); color:var(--title-color);
     font-family:system-ui, -apple-system, "Malgun Gothic", sans-serif;
-    font-size:clamp(14px, 2.4vw, 22px);
-    font-weight:700;
-    line-height:1.3;
+    font-size:clamp(14px, 2.4vw, 22px); font-weight:700; line-height:1.3;
   }
-
-  /* 좌우 화살표 */
   .nav{
     position:absolute; top:50%; transform:translateY(-50%);
     width:44px; height:44px; border:none; cursor:pointer;
@@ -80,8 +57,6 @@
   .nav:hover{ background:var(--arrow-bg-hover); }
   .prev{ left:var(--gap); }
   .next{ right:var(--gap); }
-
-  /* 하단 점 인디케이터 */
   .dots{
     position:absolute; left:0; right:0; bottom:var(--gap);
     display:flex; justify-content:center; gap:8px; z-index:3;
@@ -98,7 +73,7 @@
 
 <div class="banner" id="banner">
   <div class="viewport">
-    <div class="track" id="track"><!-- 슬라이드 자동 생성 --></div>
+    <div class="track" id="track"></div>
   </div>
   <button class="nav prev" id="prev" aria-label="이전">&#10094;</button>
   <button class="nav next" id="next" aria-label="다음">&#10095;</button>
@@ -108,12 +83,9 @@
 <script>
   /* ============================================================
      ★ 여기 CARDS 목록만 수정하면 됩니다 ★
-     - 카드 1개 = { img: 표지이미지, title: 배너에 뜰 제목, link: 클릭 시 이동할 노션 주소 }
-     - 카드를 추가/삭제하면 장수(점·자동넘김)가 자동으로 맞춰집니다.
-     - link가 아직 없으면 "#" 로 두세요(클릭해도 이동 안 함). 노션 페이지 만든 뒤 주소로 교체.
+     - 카드 1개 = { img: 표지이미지, title: 배너 제목, link: 클릭 시 이동할 노션 주소 }
+     - 카드를 추가/삭제하면 점·자동넘김이 자동 대응됩니다.
      ------------------------------------------------------------ */
-  // title은 비워둠(표지 이미지에 이미 제목이 들어있음). 필요하면 문구 넣기.
-  // link는 각 카드뉴스의 노션 페이지 주소로 교체하세요.
   const CARDS = [
     { img: "1.png", title: "", link: "https://biotrap.notion.site/39e69ba1e49080d09b80d1f6d772ad3f?source=copy_link" },  // 배리 마셜 자가실험
     { img: "2.png", title: "", link: "https://biotrap.notion.site/39e69ba1e49080ebb725f098158b6e6a?source=copy_link" },  // 인간 세포 3D 이미지
@@ -123,7 +95,7 @@
   ];
 
   const INTERVAL_MS = 5000;   // ← 자동 넘김 속도(ms). 5000 = 5초
-  const OPEN_NEW_TAB = true;  // ← true면 클릭 시 새 탭에서 열림(노션 임베드에서 권장)
+  const OPEN_NEW_TAB = true;  // ← true면 클릭 시 새 탭에서 열림
   /* ============================================================ */
 
   const track = document.getElementById('track');
@@ -134,16 +106,13 @@
   CARDS.forEach((c, i) => {
     const s = document.createElement('div');
     s.className = 'slide';
-
     const a = document.createElement('a');
     a.className = 'card';
     a.href = c.link || '#';
     if (OPEN_NEW_TAB && c.link && c.link !== '#') { a.target = '_blank'; a.rel = 'noopener'; }
-
     const img = document.createElement('img');
     img.src = c.img; img.alt = c.title || ('카드 ' + (i+1));
     a.appendChild(img);
-
     if (c.title) {
       const cap = document.createElement('div');
       cap.className = 'caption';
@@ -152,7 +121,6 @@
     }
     s.appendChild(a);
     track.appendChild(s);
-
     const d = document.createElement('button');
     d.className = 'dot';
     d.addEventListener('click', () => { go(i); restart(); });
@@ -166,27 +134,22 @@
     slides.forEach((s,i)=> s.classList.toggle('active', i===index));
     dots.forEach((d,i)=> d.classList.toggle('active', i===index));
   }
-  function go(i){ index = (i + N) % N; render(); }  // 무한 루프
+  function go(i){ index = (i + N) % N; render(); }
   function next(){ go(index+1); }
   function prev(){ go(index-1); }
-
   function start(){ timer = setInterval(next, INTERVAL_MS); }
   function stop(){ clearInterval(timer); }
   function restart(){ stop(); start(); }
 
   document.getElementById('next').addEventListener('click', ()=>{ next(); restart(); });
   document.getElementById('prev').addEventListener('click', ()=>{ prev(); restart(); });
-
   document.addEventListener('keydown', e=>{
     if(e.key==='ArrowRight'){ next(); restart(); }
     if(e.key==='ArrowLeft'){ prev(); restart(); }
   });
-
   const banner = document.getElementById('banner');
   banner.addEventListener('mouseenter', stop);
   banner.addEventListener('mouseleave', start);
-
-  // 모바일 터치 스와이프
   let startX = null;
   banner.addEventListener('touchstart', e=>{ startX = e.touches[0].clientX; }, {passive:true});
   banner.addEventListener('touchend', e=>{
